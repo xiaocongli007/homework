@@ -26,7 +26,8 @@ int multiply(int a, int b) {
 
 
 
-/*以下是基于位运算的GCD实现,思路同stein算法*/
+/*以下是基于位运算的GCD实现,思路同stein算法.该算法的时间复杂度与欧几里得算法相同，为O(a),因为它最坏情况下会退化到普通的辗转相除法。该算法不是通过
+减少执行次数，而是通过将mod运算和除法运算转换为更快的位运算来提速的*/
 int binaryGCD(int u,int v){
     int count;
 
