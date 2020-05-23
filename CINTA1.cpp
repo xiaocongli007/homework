@@ -26,8 +26,7 @@ int multiply(int a, int b) {
 
 
 
-/*以下是基于位运算的GCD实现,思路同stein算法.该算法的时间复杂度与欧几里得算法相同，为O(a),因为它最坏情况下会退化到普通的辗转相除法。该算法不是通过
-减少执行次数，而是通过将mod运算和除法运算转换为更快的位运算来提速的*/
+/*以下是基于位运算的GCD实现,思路同stein算法*/
 int binaryGCD(int u,int v){
     int count;
 
@@ -69,16 +68,7 @@ int binaryGCD(int u,int v){
 }
 
 
-/*
-    以下是binary版的扩展欧几里得算法实现思路：
-    因为扩展欧几里德算法的计算过程中，还会像辗转相除法一样需要mod的计算，所以我需要先用位计算实现mod，这就又要求我先用位计算实现减法，
-而位运算实现减法又需要我先用位运算实现加法。
-    所以需要做的工作是：
-    （1）位计算实现加法
-    （2）位计算实现加法后，在此基础上实现位计算的减法
-    （3）位计算实现减法后，在此基础上实现基于位运算的mod(思路同naive的除法算法)
-    （4）在（3）的基础实现基于位运算的扩展欧几里得。
- */
+
 
 int add(int a, int b) {
     if (b == 0) { return a; }
@@ -109,12 +99,13 @@ int mod(int a,int b){
     return r;
 }
 
-int binary_EX_GCD(int a,int b,int *x,int *y){
+//binary-egcd的递归版本
+int binary_EX_GCD_recurse(int a,int b,int *x,int *y){
     if(b==0){
         *x=1,*y=0;
         return a;
     }
-    int r = binary_EX_GCD(b,mod(a,b),x,y);          //等价于int r = binary_EX_GCD(b,a%b,x,y);
+    int r = binary_EX_GCD_recurse(b,mod(a,b),x,y);          //等价于int r = binary_EX_GCD(b,a%b,x,y);
     int t = *x;
     *x = *y;
     *y = subtract(t,multiply(Divide(a,b),*y));      //等价于*y = t-a/b**y;
@@ -122,7 +113,30 @@ int binary_EX_GCD(int a,int b,int *x,int *y){
 }
 
 
+//binary-egcd的迭代版本
+int Binary_EX_GCD_iteration(int a,int b,int &s0,int &t0){
+    s0=1;t0=0;
+    int s1=0,t1=1;
+    int temp,s_temp,t_temp;
+    while(b){
+        int q = Divide(a,b);
 
+        temp=a;
+        a=b;
+        b=mod(temp,b);          //b=temp%b;
+
+        s_temp=s0;
+        s0=s1;
+        s1=subtract(s_temp,multiply(q,s1)); //s1=s_temp-q*s1;
+
+        t_temp=t0;
+        t0=t1;
+        t1=subtract(t_temp,multiply(q,t1)); //t1=t_temp-q*t1;
+
+    }
+    return a;
+
+}
 
 /*Demo展示*/
 int main(){
@@ -130,6 +144,8 @@ int main(){
     cout<<"使用simple Multiplication计算:-2*256="<<multiply(-2,256)<<endl;
     cout<<"使用BinaryGCD算法计算出：12345和678的最大公因数是:"<<binaryGCD(12345,678)<<endl;
     int x=0,y=0;
-    cout<<"使用Binary_EX_GCD算法计算出：12345和678的最大公因数是:"<<binary_EX_GCD(12345,678,&x,&y)<<",系数是:"<<x<<","<<y<<endl;
+    cout<<"使用Binary_EX_GCD_recurse算法计算出：12345和678的最大公因数是:"<<binary_EX_GCD_recurse(12345,678,&x,&y)<<",系数是:"<<x<<","<<y<<endl;
+    int s=0,t=0;
+    cout<<"使用Binary_EX_GCD_iteration算法计算出：12345和678的最大公因数是:"<<Binary_EX_GCD_iteration(12345,678,s,t)<<",系数是:"<<s<<","<<t<<endl;
     return 0;
 }
