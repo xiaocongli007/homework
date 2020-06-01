@@ -18,3 +18,7 @@ CINTA1.cpp包含以下代码：
 1.CINTA2.cpp包含求模指数运算的代码
 
 2.CINTA2.py包含求乘法逆元a',使得a a' = 1 (mod n)及求同余方程a x = b (mod m)的代码
+
+
+第三次作业(CINTA3.py)
+求欧拉phi函数
